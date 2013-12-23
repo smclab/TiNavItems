@@ -2,8 +2,7 @@
 //  TiUIWindowProxy+NavItems.m
 //  TiNavItems
 //
-//  Created by pier on 12/12/13.
-//
+//  Copyright 2013 © SMC Treviso s.r.l.
 //
 
 #import "TiBase.h"
@@ -14,18 +13,20 @@
 @implementation TiUIWindowProxy (NavItems)
 
 
-#define SETPROPOBJ(m,x) \
+#define SETPROPOBJ_NAVITEMS(m,n,x) \
 {\
 	id value = [self valueForKey:m]; \
-	if (value!=nil)\
+	id button = [self valueForKey:n]; \
+	[self replaceValue:nil forKey:m notification:NO];\
+	if (value != nil || button != nil)\
 	{\
 		if ([value isKindOfClass:[TiComplexValue class]])\
 		{\
 			TiComplexValue *cv = (TiComplexValue*)value;\
-			[self x:(cv.value==[NSNull null]) ? nil : cv.value withObject:cv.properties];\
+			[self x:(cv.value == [NSNull null]) ? nil : cv.value withObject:cv.properties];\
 		}\
 		else {\
-			[self x:(value==[NSNull null]) ? nil : value withObject:nil];\
+			[self x:(value == [NSNull null]) ? nil : value withObject:nil];\
 		}\
 	}\
 	else {\
@@ -36,16 +37,12 @@
 
 -(void)setupWindowDecorationsForMultipleItems;
 {
-	NSLog(@"[ERROR] YYY 1");
-	
 	if ((controller == nil) || ([controller navigationController] == nil))
 	{
-		NSLog(@"[ERROR] YYY 2");
 		return;
 	}
-	
-	/*SETPROPOBJ(@"leftNavItems", setLeftNavItems)*/
-	SETPROPOBJ(@"rightNavItems", setRightNavItems)
+
+	SETPROPOBJ_NAVITEMS(@"rightNavItems", @"rightNavButton", setRightNavItems);
 }
 
 
@@ -54,7 +51,7 @@
 	if ((controller == nil) || ([controller navigationController] == nil)) {
         return;
     }
-	
+
 	NSArray * rightBarItems = controller.navigationItem.rightBarButtonItems;
 	
 	if (rightBarItems != nil) {
@@ -63,92 +60,47 @@
 			if ([item respondsToSelector:@selector(proxy)]) {
 				TiViewProxy* p = (TiViewProxy*)[item performSelector:@selector(proxy)];
 				[p removeBarButtonView];
+				[self forgetProxy:p];
 			}
 		}
 	}
 }
 
 
-/*-(void)setRightNavItems:(NSArray *)newItems
+-(void)setRightNavButton:(id)proxy withObject:(id)properties;
 {
-	NSArray * oldItems = [self valueForUndefinedKey:@"rightNavItems"];
+	[self replaceValue:proxy forKey:@"rightNavButton" notification:NO];
+}
 
-	if (![oldItems isKindOfClass:[NSArray class]])
-	{
-		oldItems = nil;
-	}
-
-	BOOL newItemsIsArray = [newItems isKindOfClass:[NSArray class]];
-
-	if (newItemsIsArray)
-	{
-		for (TiViewProxy * currentItem in newItems)
-		{
-			if (![currentItem respondsToSelector:@selector(supportsNavBarPositioning)] ||
-				![currentItem supportsNavBarPositioning])
-			{
-				NSString * errorString = [NSString stringWithFormat:@"%@ does not support being in a toolbar!", currentItem];
-				[self throwException:errorString subreason:nil location:CODELOCATION];
-				*/ /*
-				 *        Note that this theoretically could mean proxies are improperly remembered
-				 *        if a later entry causes this exception to be thrown. However, the javascript
-				 *        should NOT be using nonproxy objects and the onus is on the Javascript
-				 */ /*
-			}
-
-			if (![oldItems containsObject:currentItem])
-			{
-				[self rememberProxy:currentItem];
-			}
-		}
-	}
-
-	for (TiViewProxy * currentItem in oldItems) {
-		if (newItemsIsArray && [newItems containsObject:currentItem]) {
-			continue;
-		}
-		[self forgetProxy:currentItem];
-	}
-
-	
-
-	[self replaceValue:newItems forKey:@"rightNavItems" notification:NO];
-}*/
-
-
-/*-(void)setLeftNavItems:(id)proxy withObject:(id)properties;
-{
-	ENSURE_UI_THREAD_WITH_OBJ(setLeftNavItems, proxy, properties);
-
-	DebugLog(@"[ERROR] Non male LEFT");
- }*/
 
 -(void)setRightNavItems:(id)newItems withObject:(id)properties;
 {
-	[self setRightNavItems:newItems];
-}
+	ENSURE_UI_THREAD_WITH_OBJ(setRightNavItems, newItems, properties);
 
-
--(void)setRightNavItems:(id)newItems;
-{
 	ENSURE_TYPE_OR_NIL(newItems, NSArray);
 
-	if (![NSThread isMainThread]) {
-		id o = [NSArray arrayWithObjects:@"" "setRightNavItems", NULL_IF_NIL(newItems), nil];
-		TiThreadPerformOnMainThread(^{
-			[self _dispatchWithObjectOnUIThread:o];
-		},NO);
-		return;
+	if (properties == nil)
+	{
+		properties = [self valueForKey:@"rightNavSettings"];
 	}
-	
-	NSLog(@"[ERROR] XXX 1");
+	else
+	{
+        [self setValue:properties forKey:@"rightNavSettings"];
+    }
+
+	TiViewProxy * rightNavButton = [self valueForKey:@"rightNavButton"];
+
+	ENSURE_TYPE_OR_NIL(rightNavButton, TiViewProxy);
+
+	if (newItems == nil && rightNavButton != nil)
+	{
+		newItems = [NSArray arrayWithObjects: rightNavButton, nil];
+	}
 
 	NSArray * oldItems = [self valueForUndefinedKey:@"rightNavItems"];
-	
+
 	if (![oldItems isKindOfClass:[NSArray class]])
 	{
-		NSLog(@"[ERROR] XXX 2");
-		
 		oldItems = nil;
 	}
 
@@ -156,8 +108,6 @@
 
 	if (newItemsIsArray)
 	{
-		NSLog(@"[ERROR] XXX 3");
-
 		for (TiViewProxy * currentItem in newItems)
 		{
 			if (![currentItem respondsToSelector:@selector(supportsNavBarPositioning)] ||
@@ -166,7 +116,7 @@
 				NSString * errorString = [NSString stringWithFormat:@"%@ does not support being in a toolbar!", currentItem];
 				[self throwException:errorString subreason:nil location:CODELOCATION];
 			}
-			
+
 			if (![oldItems containsObject:currentItem])
 			{
 				[self rememberProxy:currentItem];
@@ -183,8 +133,6 @@
 
 	if (controller != nil && [controller navigationController] != nil)
 	{
-		NSLog(@"[ERROR] XXX 4");
-		
 		NSArray * existing = [controller toolbarItems];
 		UINavigationController * ourNC = [controller navigationController];
 
@@ -206,44 +154,18 @@
 		{
 			if ([proxy supportsNavBarPositioning])
 			{
-				NSLog(@"[ERROR] XXX 7");
-
 				UIBarButtonItem * item = [proxy barButtonItem];
 				[array addObject:item];
 			}
 		}
 
-		[controller.navigationItem setRightBarButtonItems:array];
+		NSArray * reversedArray = [[array reverseObjectEnumerator] allObjects];
+		[controller.navigationItem setRightBarButtonItems:reversedArray];
 		[array release];
 	}
 	
+	[self replaceValue:nil forKey:@"rightNavButton" notification:NO];
 	[self replaceValue:newItems forKey:@"rightNavItems" notification:NO];
-		
-	/*if (controller != nil && [controller navigationController] != nil)
-	{
-		if (proxy == nil || [proxy supportsNavBarPositioning])
-		{
-			UIBarButtonItem * item = controller.navigationItem.rightBarButtonItem;
-
-			if (item != nil && [item respondsToSelector:@selector(proxy)])
-			{
-				TiViewProxy * p = (TiViewProxy *)[item performSelector:@selector(proxy)];
-				[p removeBarButtonView];
-			}
-
-			controller.navigationItem.rightBarButtonItem = nil;
-			
-			if (proxy != nil)
-			{
-				BOOL animated = NO; // TODO
-
-				[controller.navigationItem setRightBarButtonItems:newItems];
-			}
-		}
-	}
-	else {
-		[self replaceValue:newItems forKey:@"rightNavItems" notification:NO];
-	}*/
 }
 
 
@@ -254,6 +176,7 @@
 	[self setupWindowDecorationsForMultipleItems];
 	[super viewWillAppear:animated];
 }
+
 
 -(void)viewWillDisappear:(BOOL)animated;
 {

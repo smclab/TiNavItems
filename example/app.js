@@ -1,39 +1,31 @@
-// This is a test harness for your module
-// You should do something interesting in this harness 
-// to test out the module and to provide instructions 
-// to users on how to use it by example.
+
+// Not necessary
+
+require('it.smc.navitems');
 
 
-// open a single window
-var win = Ti.UI.createWindow({
-	backgroundColor:'white'
+// Creating the window
+
+var window = Ti.UI.createWindow({
+	title: 'Multiple items',
+
+	// The `rightNavItems` is an array of views
+
+	rightNavItems: [
+		Ti.UI.createButton({
+			title: 'Example'
+		}),
+		Ti.UI.createButton({
+			title: 'Another one'
+		})
+	]
 });
-var label = Ti.UI.createLabel();
-win.add(label);
-win.open();
 
-// TODO: write your module tests here
-var TiNavItems = require('it.smc.navitems');
-Ti.API.info("module is => " + TiNavItems);
 
-label.text = TiNavItems.example();
+// Required as of Titanium SDK 3.2+
 
-Ti.API.info("module exampleProp is => " + TiNavItems.exampleProp);
-TiNavItems.exampleProp = "This is a test value";
+var navWindow = Ti.UI.iOS.createNavigationWindow({
+	window: window
+});
 
-if (Ti.Platform.name == "android") {
-	var proxy = TiNavItems.createExample({
-		message: "Creating an example Proxy",
-		backgroundColor: "red",
-		width: 100,
-		height: 100,
-		top: 100,
-		left: 150
-	});
-
-	proxy.printMessage("Hello world!");
-	proxy.message = "Hi world!.  It's me again.";
-	proxy.printMessage("Hello world!");
-	win.add(proxy);
-}
-
+navWindow.open();
