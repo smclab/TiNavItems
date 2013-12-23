@@ -4,7 +4,7 @@
 #
 version: 0.1.0
 apiversion: 2
-description: TiNavItems permits multiple items in the navigation bar
+description: TiNavItems lets you use multiple items in the navigation bar
 author: Pier Paolo Ramon
 license: MIT
 copyright: 2013
