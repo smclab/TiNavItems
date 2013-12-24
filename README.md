@@ -23,7 +23,7 @@ var window = Ti.UI.createWindow({
 Caveats
 -------
 
-Currently only `rightNavItems` on `Ti.UI.Window`s is supported.
+Currently only `rightNavItems` on `Ti.UI.Window`s is supported. Support for `leftNavItems` is on the way for `0.2.0`. Full support for PopOvers and others is scheduled for `0.3.0`.
 
 Credits
 -------
