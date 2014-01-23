@@ -28,7 +28,7 @@ Currently only `rightNavItems` on `Ti.UI.Window`s is supported. Support for `lef
 Credits
 -------
 
-Humbly made the spry ladies and gents at SMC.
+Humbly made by the spry ladies and gents at SMC.
 
 License
 -------
