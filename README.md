@@ -1,5 +1,9 @@
 TiNavItems
 ==========
+### [Download][rls] [Example][exm]
+
+[rls]: https://github.com/smclab/TiNavItems/releases
+[exm]: https://github.com/smclab/TiNavItems/tree/master/example
 
 Multiple `rightNavItems` for your windows! (iOS only)
 
