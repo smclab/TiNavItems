@@ -1,16 +1,11 @@
 # TiNavItems Module
 
 ## Description
+
 Multiple rightNavItems for your windows! (iOS only)
 
-## Accessing the TiNavItems
-To access this module from JavaScript, you would do the following:
-
-	var TiNavItems = require("it.smc.navItems");
-
-The TiNavItems variable is a reference to the Module object.Module object.
-
 ## Usage
+
 ```js
 var button1 = Ti.UI.createButton({
 	title: 'Flic'
@@ -29,6 +24,7 @@ var window = Ti.UI.createWindow({
 Currently only `rightNavItems` on `Ti.UI.Window`s is supported. Support for `leftNavItems` is on the way for `0.2.0`. Full support for PopOvers and others is scheduled for `0.3.0`.
 
 ## Author
+
 Humbly made by the spry ladies and gents at SMC.
 
 ## License
