@@ -18,6 +18,7 @@ var button2 = Ti.UI.createButton({
 var window = Ti.UI.createWindow({
 	rightNavItems: [ button1, button2 ]
 });
+```
 
 ##Caveats
 
