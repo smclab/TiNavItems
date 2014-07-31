@@ -1,3 +1,7 @@
+#### :warning: Deprecated! Use [`rightNavButtons` from 3.3.0.GA][rnb] instead!
+
+[rnb]: http://docs.appcelerator.com/titanium/latest/#!/api/Titanium.UI.Window-property-rightNavButtons
+
 TiNavItems
 ==========
 
